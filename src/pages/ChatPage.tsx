@@ -12,6 +12,7 @@ function ChatPage({ user, token }: ChatPageProps) {
   const [peers, setPeers] = useState<User[]>([]);
   const [selectedPeer, setSelectedPeer] = useState<User | null>(null);
   const [input, setInput] = useState("");
+  const [search, setSearch] = useState("");
 
   const { connected, currentRoomId, messages, joinRoomWithPeer, sendMessage } =
     useChatSocket({ token, currentUser: user });
@@ -28,6 +29,7 @@ function ChatPage({ user, token }: ChatPageProps) {
   };
 
   const handleSend = () => {
+    if (!selectedPeer) return;
     if (!input.trim()) return;
     sendMessage(input.trim());
     setInput("");
@@ -38,6 +40,15 @@ function ChatPage({ user, token }: ChatPageProps) {
       handleSend();
     }
   };
+
+  const filteredPeers = peers.filter((p) => {
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return (
+      p.username.toLowerCase().includes(q) ||
+      p.email.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div className="tg-root">
@@ -62,11 +73,15 @@ function ChatPage({ user, token }: ChatPageProps) {
         </div>
 
         <div className="tg-search">
-          <input placeholder="Поиск" />
+          <input
+            placeholder="Поиск по нику или почте"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
 
         <div className="tg-dialogs">
-          {peers.map((peer) => (
+          {filteredPeers.map((peer) => (
             <div
               key={peer.id}
               className={
@@ -84,7 +99,7 @@ function ChatPage({ user, token }: ChatPageProps) {
                 </div>
                 <div className="tg-dialog-bottom">
                   <span className="tg-dialog-last">
-                    {/* можно показывать последнее сообщение позже */}
+                    {/* тут можно вывести превью последнего сообщения */}
                   </span>
                 </div>
               </div>
@@ -165,4 +180,4 @@ function ChatPage({ user, token }: ChatPageProps) {
   );
 }
 
-export default ChatPage;    
+export default ChatPage;
