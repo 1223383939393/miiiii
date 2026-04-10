@@ -13,15 +13,54 @@ function ChatPage({ user, token }: ChatPageProps) {
   const [selectedPeer, setSelectedPeer] = useState<User | null>(null);
   const [input, setInput] = useState("");
   const [search, setSearch] = useState("");
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   const { connected, currentRoomId, messages, joinRoomWithPeer, sendMessage } =
     useChatSocket({ token, currentUser: user });
 
+  // При старте НЕ грузим всех, peers остаётся пустым
   useEffect(() => {
-    fetchUsers().then((data) => {
-      setPeers(data.filter((u) => u.id !== user.id));
-    });
+    setPeers([]);
   }, [user.id]);
+
+  const handleSearch = async () => {
+    const q = search.trim();
+    if (!q) {
+      setSearchError("Введите ник или email для поиска");
+      setPeers([]);
+      return;
+    }
+
+    try {
+      setSearchLoading(true);
+      setSearchError(null);
+      const all = await fetchUsers();
+      const filtered = all
+        .filter((u) => u.id !== user.id)
+        .filter((p) => {
+          const lower = q.toLowerCase();
+          return (
+            p.username.toLowerCase().includes(lower) ||
+            p.email.toLowerCase().includes(lower)
+          );
+        });
+
+      if (filtered.length === 0) {
+        setSearchError("Пользователи не найдены");
+      }
+      setPeers(filtered);
+      // выбранный собеседник сбрасывается, если его нет в новых результатах
+      setSelectedPeer((prev) =>
+        prev && filtered.find((p) => p.id === prev.id) ? prev : null
+      );
+    } catch (e: any) {
+      setSearchError("Ошибка при поиске пользователей");
+      setPeers([]);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
 
   const handleSelectPeer = (peer: User) => {
     setSelectedPeer(peer);
@@ -41,21 +80,12 @@ function ChatPage({ user, token }: ChatPageProps) {
     }
   };
 
-  const filteredPeers = peers.filter((p) => {
-    if (!search.trim()) return true;
-    const q = search.toLowerCase();
-    return (
-      p.username.toLowerCase().includes(q) ||
-      p.email.toLowerCase().includes(q)
-    );
-  });
-
   return (
     <div className="tg-root">
       {/* Сайдбар */}
       <div className="tg-sidebar">
         <div className="tg-sidebar-header">
-          <div className="tg-logo">Messenger</div>
+          <div className="tg-logo">QMessage</div>
         </div>
 
         <div className="tg-profile">
@@ -73,15 +103,46 @@ function ChatPage({ user, token }: ChatPageProps) {
         </div>
 
         <div className="tg-search">
-          <input
-            placeholder="Поиск по нику или почте"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <div style={{ display: "flex", gap: 8 }}>
+            <input
+              placeholder="Найти по нику или почте"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setSearchError(null);
+              }}
+            />
+            <button
+              style={{
+                padding: "6px 10px",
+                borderRadius: 12,
+                border: "none",
+                background: "#3390ec",
+                color: "#fff",
+                fontSize: 13,
+                cursor: "pointer",
+              }}
+              onClick={handleSearch}
+              disabled={searchLoading}
+            >
+              {searchLoading ? "Поиск..." : "Найти"}
+            </button>
+          </div>
+          {searchError && (
+            <div
+              style={{
+                marginTop: 4,
+                fontSize: 12,
+                color: "#ff6b6b",
+              }}
+            >
+              {searchError}
+            </div>
+          )}
         </div>
 
         <div className="tg-dialogs">
-          {filteredPeers.map((peer) => (
+          {peers.map((peer) => (
             <div
               key={peer.id}
               className={
@@ -99,12 +160,23 @@ function ChatPage({ user, token }: ChatPageProps) {
                 </div>
                 <div className="tg-dialog-bottom">
                   <span className="tg-dialog-last">
-                    {/* тут можно вывести превью последнего сообщения */}
+                    {peer.email}
                   </span>
                 </div>
               </div>
             </div>
           ))}
+          {peers.length === 0 && !searchLoading && !searchError && (
+            <div
+              style={{
+                padding: "8px 12px",
+                fontSize: 13,
+                color: "#9db0c1",
+              }}
+            >
+              Найдите пользователя по нику или email, чтобы начать чат.
+            </div>
+          )}
         </div>
       </div>
 
@@ -166,7 +238,7 @@ function ChatPage({ user, token }: ChatPageProps) {
               placeholder={
                 selectedPeer
                   ? "Написать сообщение..."
-                  : "Сначала выберите собеседника"
+                  : "Сначала найдите и выберите собеседника"
               }
               disabled={!selectedPeer}
             />

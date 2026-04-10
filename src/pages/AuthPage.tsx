@@ -107,7 +107,7 @@ function AuthPage({ onAuthSuccess }: AuthPageProps) {
   return (
     <div className="auth-root">
       <div className="auth-panel">
-        <h1>Messenger</h1>
+        <h1>QMessage</h1>
         <div className="auth-tabs">
           <button
             className={mode === "login" ? "active" : ""}
