@@ -11,10 +11,11 @@ export type AuthResponse = {
 
 export type ChatMessage = {
   id: string;
-  roomId: string;
+  peerId: string;       // с кем это диалог (для фильтрации)
   text: string;
   from: User;
   createdAt: string;
 };
+
 
 export type Peer = User;    

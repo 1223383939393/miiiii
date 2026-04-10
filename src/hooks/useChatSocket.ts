@@ -11,7 +11,6 @@ type UseChatSocketParams = {
 
 export function useChatSocket({ token, currentUser }: UseChatSocketParams) {
   const [connected, setConnected] = useState(false);
-  const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const socketRef = useRef<Socket | null>(null);
 
@@ -37,22 +36,35 @@ export function useChatSocket({ token, currentUser }: UseChatSocketParams) {
     socket.on(
       "message",
       (payload: {
-        roomId: string;
-        text: string;
         from: { id: string; username: string; email?: string };
+        toUserId: string;
+        text: string;
         createdAt: string;
       }) => {
+        const from: User = {
+          id: payload.from.id,
+          username: payload.from.username,
+          email: payload.from.email || "",
+        };
+
+        // Сообщение считается "моим", если от меня
+        const isMine = from.id === currentUser.id;
+
+        // Собеседник — тот, кто не я
+        const peerId = isMine ? payload.toUserId : from.id;
+
         setMessages((prev) => [
           ...prev,
           {
-            id: `${payload.roomId}-${payload.createdAt}-${Math.random()}`,
-            roomId: payload.roomId,
+            id:
+              payload.createdAt +
+              "-" +
+              payload.toUserId +
+              "-" +
+              Math.random(),
+            peerId,
             text: payload.text,
-            from: {
-              id: payload.from.id,
-              username: payload.from.username,
-              email: payload.from.email || "",
-            },
+            from,
             createdAt: payload.createdAt,
           },
         ]);
@@ -65,25 +77,14 @@ export function useChatSocket({ token, currentUser }: UseChatSocketParams) {
     };
   }, [token, currentUser]);
 
-  const joinRoomWithPeer = (peerId: string) => {
-    if (!socketRef.current) return;
-    setMessages([]); // очищаем чат при смене собеседника
-    socketRef.current.emit("join", { peerId });
-    socketRef.current.once("joined", ({ roomId }: { roomId: string }) => {
-      setCurrentRoomId(roomId);
-    });
-  };
-
-  const sendMessage = (text: string) => {
-    if (!socketRef.current || !currentRoomId || !text.trim()) return;
-    socketRef.current.emit("message", { roomId: currentRoomId, text });
+  const sendMessage = (toUserId: string, text: string) => {
+    if (!socketRef.current || !text.trim()) return;
+    socketRef.current.emit("message", { toUserId, text });
   };
 
   return {
     connected,
-    currentRoomId,
     messages,
-    joinRoomWithPeer,
     sendMessage,
   };
 }

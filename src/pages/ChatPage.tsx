@@ -16,10 +16,12 @@ function ChatPage({ user, token }: ChatPageProps) {
   const [searchError, setSearchError] = useState<string | null>(null);
   const [searchLoading, setSearchLoading] = useState(false);
 
-  const { connected, currentRoomId, messages, joinRoomWithPeer, sendMessage } =
-    useChatSocket({ token, currentUser: user });
+  const { connected, messages, sendMessage } = useChatSocket({
+    token,
+    currentUser: user,
+  });
 
-  // При старте НЕ грузим всех, peers остаётся пустым
+  // При старте не загружаем всех
   useEffect(() => {
     setPeers([]);
   }, [user.id]);
@@ -50,7 +52,6 @@ function ChatPage({ user, token }: ChatPageProps) {
         setSearchError("Пользователи не найдены");
       }
       setPeers(filtered);
-      // выбранный собеседник сбрасывается, если его нет в новых результатах
       setSelectedPeer((prev) =>
         prev && filtered.find((p) => p.id === prev.id) ? prev : null
       );
@@ -64,13 +65,12 @@ function ChatPage({ user, token }: ChatPageProps) {
 
   const handleSelectPeer = (peer: User) => {
     setSelectedPeer(peer);
-    joinRoomWithPeer(peer.id);
   };
 
   const handleSend = () => {
     if (!selectedPeer) return;
     if (!input.trim()) return;
-    sendMessage(input.trim());
+    sendMessage(selectedPeer.id, input.trim());
     setInput("");
   };
 
@@ -79,6 +79,11 @@ function ChatPage({ user, token }: ChatPageProps) {
       handleSend();
     }
   };
+
+  // Сообщения только с выбранным собеседником
+  const currentMessages = selectedPeer
+    ? messages.filter((m) => m.peerId === selectedPeer.id)
+    : [];
 
   return (
     <div className="tg-root">
@@ -93,9 +98,7 @@ function ChatPage({ user, token }: ChatPageProps) {
             {user.username[0]?.toUpperCase()}
           </div>
           <div className="tg-profile-info">
-            <div className="tg-username-input">
-              {user.username}
-            </div>
+            <div className="tg-username-input">{user.username}</div>
             <span className="tg-profile-status">
               {connected ? "online" : "offline"}
             </span>
@@ -159,9 +162,7 @@ function ChatPage({ user, token }: ChatPageProps) {
                   <span className="tg-dialog-title">{peer.username}</span>
                 </div>
                 <div className="tg-dialog-bottom">
-                  <span className="tg-dialog-last">
-                    {peer.email}
-                  </span>
+                  <span className="tg-dialog-last">{peer.email}</span>
                 </div>
               </div>
             </div>
@@ -188,45 +189,45 @@ function ChatPage({ user, token }: ChatPageProps) {
               {selectedPeer ? selectedPeer.username : "Выберите собеседника"}
             </div>
             <div className="tg-chat-subtitle">
-              {currentRoomId ? "Чат открыт" : "Нет активной комнаты"}
+              {selectedPeer
+                ? "Личный чат"
+                : "Нет активной переписки"}
             </div>
           </div>
         </div>
 
         <div className="tg-chat-messages">
-          {messages
-            .filter((m) => m.roomId === (currentRoomId || ""))
-            .map((msg) => (
-              <div
-                key={msg.id}
-                className={
-                  "tg-message-row " +
-                  (msg.from.id === user.id ? "right" : "left")
-                }
-              >
-                <div className="tg-message-bubble">
-                  {msg.from.id !== user.id && (
-                    <div
-                      style={{
-                        fontSize: "12px",
-                        fontWeight: 600,
-                        marginBottom: 2,
-                        color: "#9db0c1",
-                      }}
-                    >
-                      {msg.from.username}
-                    </div>
-                  )}
-                  <div className="tg-message-text">{msg.text}</div>
-                  <div className="tg-message-meta">
-                    {new Date(msg.createdAt).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+          {currentMessages.map((msg) => (
+            <div
+              key={msg.id}
+              className={
+                "tg-message-row " +
+                (msg.from.id === user.id ? "right" : "left")
+              }
+            >
+              <div className="tg-message-bubble">
+                {msg.from.id !== user.id && (
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      fontWeight: 600,
+                      marginBottom: 2,
+                      color: "#9db0c1",
+                    }}
+                  >
+                    {msg.from.username}
                   </div>
+                )}
+                <div className="tg-message-text">{msg.text}</div>
+                <div className="tg-message-meta">
+                  {new Date(msg.createdAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </div>
               </div>
-            ))}
+            </div>
+          ))}
         </div>
 
         <div className="tg-chat-input">
