@@ -1,0 +1,323 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+}
+
+body {
+  background: #0e1621;
+}
+
+/* Корневой контейнер */
+.tg-root {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  color: #fff;
+}
+
+/* Левый сайдбар */
+.tg-sidebar {
+  width: 320px;
+  background: #17212b;
+  border-right: 1px solid #202b36;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Верхняя часть сайдбара */
+.tg-sidebar-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #202b36;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tg-logo {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Профиль */
+.tg-profile {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tg-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #2b5278;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.tg-profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.tg-username-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.tg-username-input::placeholder {
+  color: #8899a8;
+}
+
+.tg-profile-status {
+  font-size: 12px;
+  color: #57a6ff;
+}
+
+/* Поиск */
+.tg-search {
+  padding: 8px 10px;
+}
+
+.tg-search input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 16px;
+  border: none;
+  outline: none;
+  background: #0e1621;
+  color: #fff;
+  font-size: 14px;
+}
+
+.tg-search input::placeholder {
+  color: #68788b;
+}
+
+/* Список диалогов */
+.tg-dialogs {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.tg-dialog-item {
+  display: flex;
+  padding: 10px 12px;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.tg-dialog-item:hover {
+  background: #1f2933;
+}
+
+.tg-dialog-item.active {
+  background: #202b36;
+}
+
+.tg-dialog-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #2a3942;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.tg-dialog-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.tg-dialog-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tg-dialog-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.tg-dialog-time {
+  font-size: 11px;
+  color: #768a9a;
+}
+
+.tg-dialog-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #9db0c1;
+  gap: 8px;
+}
+
+.tg-dialog-last {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.tg-dialog-unread {
+  min-width: 18px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #3390ec;
+  color: #fff;
+  font-size: 11px;
+  text-align: center;
+}
+
+/* Правая часть — чат */
+.tg-chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #0e1621;
+}
+
+/* Шапка чата */
+.tg-chat-header {
+  height: 56px;
+  border-bottom: 1px solid #202b36;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+}
+
+.tg-chat-title-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.tg-chat-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.tg-chat-subtitle {
+  font-size: 12px;
+  color: #8899a8;
+}
+
+/* Сообщения */
+.tg-chat-messages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tg-message-row {
+  display: flex;
+  width: 100%;
+}
+
+.tg-message-row.left {
+  justify-content: flex-start;
+}
+
+.tg-message-row.right {
+  justify-content: flex-end;
+}
+
+.tg-message-bubble {
+  max-width: 60%;
+  padding: 8px 10px 6px;
+  border-radius: 12px;
+  background: #2a3942;
+  color: #fff;
+  font-size: 14px;
+  position: relative;
+}
+
+.tg-message-row.right .tg-message-bubble {
+  background: #2b5278;
+  border-bottom-right-radius: 2px;
+}
+
+.tg-message-row.left .tg-message-bubble {
+  border-bottom-left-radius: 2px;
+}
+
+.tg-message-text {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.tg-message-meta {
+  margin-top: 2px;
+  font-size: 11px;
+  color: #9db0c1;
+  text-align: right;
+}
+
+/* Ввод */
+.tg-chat-input {
+  padding: 10px 12px;
+  border-top: 1px solid #202b36;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #17212b;
+}
+
+.tg-input-wrapper {
+  flex: 1;
+  background: #0e1621;
+  border-radius: 18px;
+  padding: 6px 12px;
+}
+
+.tg-chat-input input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #fff;
+  font-size: 14px;
+}
+
+.tg-chat-input input::placeholder {
+  color: #68788b;
+}
+
+.tg-chat-input button {
+  border: none;
+  outline: none;
+  padding: 8px 16px;
+  border-radius: 18px;
+  background: #3390ec;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+
+.tg-chat-input button:hover {
+  opacity: 0.9;
+}
