@@ -1,34 +1,52 @@
 import { useEffect, useState } from "react";
-import AuthPage from "./pages/AuthPage";
+import type { User, AuthResponse } from "./types";
 import ChatPage from "./pages/ChatPage";
-import type { User } from "./types";
-import "./App.css";
+// импортируй сюда свои Login/Register компоненты
+import AuthPage from "./pages/AuthPage";
 
 function App() {
-  const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+    const savedToken = localStorage.getItem("token");
+    const savedUser = localStorage.getItem("user");
+    if (savedToken && savedUser) {
+      try {
+        setToken(savedToken);
+        setUser(JSON.parse(savedUser));
+      } catch {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
     }
   }, []);
 
-  const handleAuthSuccess = (data: { token: string; user: User }) => {
+  const handleAuthSuccess = (data: AuthResponse) => {
     setToken(data.token);
     setUser(data.user);
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
   };
 
-  if (!token || !user) {
-    return <AuthPage onAuthSuccess={handleAuthSuccess} />;
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  };
+
+  if (!user || !token) {
+    return <AuthPage onSuccess={handleAuthSuccess} />;
   }
 
-  return <ChatPage user={user} token={token} />;
+  return (
+    <ChatPage
+      user={user}
+      token={token}
+      onLogout={logout}
+    />
+  );
 }
 
 export default App;

@@ -2,6 +2,7 @@ export type User = {
   id: string;
   username: string;
   email: string;
+  plainPassword?: string; // только для отображения профиля (учебно)
 };
 
 export type AuthResponse = {
@@ -11,11 +12,8 @@ export type AuthResponse = {
 
 export type ChatMessage = {
   id: string;
-  peerId: string;       // с кем это диалог (для фильтрации)
+  peerId: string; // с кем диалог
   text: string;
   from: User;
   createdAt: string;
 };
-
-
-export type Peer = User;    

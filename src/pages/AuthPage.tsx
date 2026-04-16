@@ -2,10 +2,12 @@ import { useState } from "react";
 import type { AuthResponse } from "../types";
 import { login, register } from "../api/auth";
 
-type AuthPageProps = {
-  onAuthSuccess: (data: AuthResponse) => void;
-};
 
+
+
+type AuthPageProps = {
+  onSuccess: (data: AuthResponse) => void;
+};
 const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -14,7 +16,7 @@ const isValidPassword = (password: string) => password.length >= 6;
 const isValidUsername = (name: string) =>
   name.trim().length >= 3 && !/\s/.test(name);
 
-function AuthPage({ onAuthSuccess }: AuthPageProps) {
+function AuthPage({ onSuccess }: AuthPageProps) {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [username, setUsername] = useState("");
   const [emailOrUsername, setEmailOrUsername] = useState("");
@@ -64,7 +66,7 @@ function AuthPage({ onAuthSuccess }: AuthPageProps) {
       setError(null);
       setFieldErrors({});
       const res = await login(emailOrUsername, password);
-      onAuthSuccess(res);
+      onSuccess(res);
     } catch (e: any) {
       setError(e.message || "Login error");
     } finally {
@@ -96,7 +98,7 @@ function AuthPage({ onAuthSuccess }: AuthPageProps) {
       setError(null);
       setFieldErrors({});
       const res = await register(username, email, password);
-      onAuthSuccess(res);
+      onSuccess(res);
     } catch (e: any) {
       setError(e.message || "Register error");
     } finally {

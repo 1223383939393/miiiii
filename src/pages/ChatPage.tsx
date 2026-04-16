@@ -6,9 +6,10 @@ import { useChatSocket } from "../hooks/useChatSocket";
 type ChatPageProps = {
   user: User;
   token: string;
+  onLogout: () => void;
 };
 
-function ChatPage({ user, token }: ChatPageProps) {
+function ChatPage({ user, token, onLogout }: ChatPageProps) {
   const [peers, setPeers] = useState<User[]>([]);
   const [selectedPeer, setSelectedPeer] = useState<User | null>(null);
   const [input, setInput] = useState("");
@@ -21,7 +22,6 @@ function ChatPage({ user, token }: ChatPageProps) {
     currentUser: user,
   });
 
-  // При старте не загружаем всех
   useEffect(() => {
     setPeers([]);
   }, [user.id]);
@@ -80,7 +80,6 @@ function ChatPage({ user, token }: ChatPageProps) {
     }
   };
 
-  // Сообщения только с выбранным собеседником
   const currentMessages = selectedPeer
     ? messages.filter((m) => m.peerId === selectedPeer.id)
     : [];
@@ -102,7 +101,54 @@ function ChatPage({ user, token }: ChatPageProps) {
             <span className="tg-profile-status">
               {connected ? "online" : "offline"}
             </span>
+            <div
+              style={{
+                fontSize: 12,
+                color: "#9db0c1",
+                marginTop: 4,
+                wordBreak: "break-all",
+              }}
+            >
+              Почта: {user.email}
+            </div>
+            {user.plainPassword && (
+              <div
+                style={{
+                  fontSize: 12,
+                  color: "#9db0c1",
+                  wordBreak: "break-all",
+                }}
+              >
+                Пароль: {user.plainPassword}
+              </div>
+            )}
+            <div
+              style={{
+                fontSize: 11,
+                color: "#9db0c1",
+                marginTop: 6,
+              }}
+            >
+              Демо‑сервер: после перезапуска данные аккаунтов и чатов
+              исчезнут, нужно будет залогиниться заново.
+            </div>
           </div>
+          <button
+            style={{
+              marginLeft: "auto",
+              padding: "4px 8px",
+              borderRadius: 12,
+              border: "none",
+              background: "#ff6b6b",
+              color: "#fff",
+              fontSize: 12,
+              cursor: "pointer",
+              height: 28,
+            }}
+            onClick={onLogout}
+          >
+            Выйти
+          </button>
         </div>
 
         <div className="tg-search">
@@ -189,9 +235,7 @@ function ChatPage({ user, token }: ChatPageProps) {
               {selectedPeer ? selectedPeer.username : "Выберите собеседника"}
             </div>
             <div className="tg-chat-subtitle">
-              {selectedPeer
-                ? "Личный чат"
-                : "Нет активной переписки"}
+              {selectedPeer ? "Личный чат" : "Нет активной переписки"}
             </div>
           </div>
         </div>
