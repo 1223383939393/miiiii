@@ -474,3 +474,72 @@ body {
     max-width: 85%;
   }
 }
+.tg-profile {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tg-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #2b5278;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #fff;
+  margin-right: 10px;
+}
+
+.tg-profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.tg-username-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tg-username-input {
+  font-weight: 600;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tg-logout-button {
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: none;
+  background: #ff6b6b;
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.tg-profile-status {
+  font-size: 12px;
+  color: #9db0c1;
+}
+
+.tg-profile-extra {
+  font-size: 11px;
+  color: #9db0c1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tg-profile-note {
+  opacity: 0.8;
+}

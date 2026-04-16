@@ -96,59 +96,32 @@ function ChatPage({ user, token, onLogout }: ChatPageProps) {
           <div className="tg-avatar">
             {user.username[0]?.toUpperCase()}
           </div>
+
           <div className="tg-profile-info">
-            <div className="tg-username-input">{user.username}</div>
+            <div className="tg-username-row">
+              <div className="tg-username-input">{user.username}</div>
+              <button
+                className="tg-logout-button"
+                onClick={onLogout}
+              >
+                Выйти
+              </button>
+            </div>
+
             <span className="tg-profile-status">
               {connected ? "online" : "offline"}
             </span>
-            <div
-              style={{
-                fontSize: 12,
-                color: "#9db0c1",
-                marginTop: 4,
-                wordBreak: "break-all",
-              }}
-            >
-              Почта: {user.email}
-            </div>
-            {user.plainPassword && (
-              <div
-                style={{
-                  fontSize: 12,
-                  color: "#9db0c1",
-                  wordBreak: "break-all",
-                }}
-              >
-                Пароль: {user.plainPassword}
+
+            <div className="tg-profile-extra">
+              <div>Почта: {user.email}</div>
+              {user.plainPassword && (
+                <div>Пароль: {user.plainPassword}</div>
+              )}
+              <div className="tg-profile-note">
+                Демо‑сервер: после перезапуска нужно войти заново.
               </div>
-            )}
-            <div
-              style={{
-                fontSize: 11,
-                color: "#9db0c1",
-                marginTop: 6,
-              }}
-            >
-              Демо‑сервер: после перезапуска данные аккаунтов и чатов
-              исчезнут, нужно будет залогиниться заново.
             </div>
           </div>
-          <button
-            style={{
-              marginLeft: "auto",
-              padding: "4px 8px",
-              borderRadius: 12,
-              border: "none",
-              background: "#ff6b6b",
-              color: "#fff",
-              fontSize: 12,
-              cursor: "pointer",
-              height: 28,
-            }}
-            onClick={onLogout}
-          >
-            Выйти
-          </button>
         </div>
 
         <div className="tg-search">
