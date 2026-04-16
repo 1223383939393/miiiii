@@ -51,15 +51,13 @@
 }
 
 #root {
-  width: 1126px;
+  width: 100%;
   max-width: 100%;
-  margin: 0 auto;
-  /* УДАЛИ или закомментируй ЭТО */
-  /* text-align: center; */
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+  margin: 0;
+  border-inline: none;
+  min-height: 100vh;
+  display: block;        /* вместо flex */
+  text-align: left;      /* чтобы ничего не центрировалось */
   box-sizing: border-box;
 }
 
