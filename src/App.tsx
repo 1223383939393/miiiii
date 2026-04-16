@@ -41,11 +41,13 @@ function App() {
   }
 
   return (
-    <ChatPage
-      user={user}
-      token={token}
-      onLogout={logout}
-    />
+    <div className="tg-root">
+      <ChatPage
+        user={user}
+        token={token}
+        onLogout={logout}
+      />
+    </div>
   );
 }
 

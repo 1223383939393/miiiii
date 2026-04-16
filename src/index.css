@@ -52,12 +52,9 @@
 
 #root {
   width: 100%;
-  max-width: 100%;
+  height: 100vh;
   margin: 0;
-  border-inline: none;
-  min-height: 100vh;
-  display: block;        /* вместо flex */
-  text-align: left;      /* чтобы ничего не центрировалось */
+  padding: 0;
   box-sizing: border-box;
 }
 
